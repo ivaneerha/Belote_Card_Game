@@ -24,4 +24,6 @@ public interface Player {
     Card playCard();
 
     Team getTeam();
+
+    void addCard(Card card);
 }

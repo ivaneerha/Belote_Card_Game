@@ -10,7 +10,6 @@ import java.util.*;
 
 public class CardPlayer implements Player {
 
-    private Bid bid;
     private List<Card> cards;
     private List<Bonus> bonuses;
     public CardPlayer() {
@@ -29,37 +28,37 @@ public class CardPlayer implements Player {
     }
 
     private void lookForQuads() {
-        CardType currentType = null;
-        List<CardType> types = new ArrayList<CardType>();
-        int count = 0;
+        List<CardType> metTypes = new ArrayList<CardType>();
+        int countOfCards = 0;
 
         for(int index = 0; index < cards.size() - 1; index++) {
-           currentType = cards.get(index).getType();
-           if(types.contains(currentType)){
+           CardType currentType = cards.get(index).getType();
+
+           if(metTypes.contains(currentType)){
                continue;
            }
 
-           types.add(currentType);
+            metTypes.add(currentType);
 
             if(currentType.equals(CardType.SEVEN) || currentType.equals(CardType.EIGHT)) {
                 continue;
             }
 
             for(int index2 = index + 1; index2 < cards.size(); index2++) {
-                if(cards.get(index2).equals(currentType)) {
-                    count++;
+                if(cards.get(index2).getType().equals(currentType)) {
+                    countOfCards++;
                 }
 
-                if(count == 4) {
-                    continue;
+                if(countOfCards == 4) {
+                    break;
                 }
             }
 
-            if(count == 4) {
+            if(countOfCards == 4) {
                 this.bonuses.add(new Quad(currentType));
             }
 
-            count = 0;
+            countOfCards = 0;
         }
     }
 
@@ -91,6 +90,10 @@ public class CardPlayer implements Player {
         }
     }
 
+    public void addCard(Card card) {
+        this.cards.add(card);
+    }
+
     public Card playCard() {
         return null;
     }
@@ -99,11 +102,4 @@ public class CardPlayer implements Player {
         return null;
     }
 
-    public void setBid(Bid bid) {
-        this.bid = bid;
-    }
-
-    public Bid getBid() {
-        return this.bid;
-    }
 }
