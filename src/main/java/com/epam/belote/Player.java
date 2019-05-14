@@ -2,7 +2,10 @@ package com.epam.belote;
 
 import com.epam.belote.bonus.Bonus;
 import com.epam.belote.cards.Card;
+import com.epam.belote.exceptions.InvalidInputException;
+import com.epam.belote.exceptions.NoCardsException;
 
+import java.util.List;
 import java.util.Set;
 
 public interface Player {
@@ -16,14 +19,16 @@ public interface Player {
     /**
      * After the bidding phase players declare bonuses if any. A player may declare multiple bonuses
      */
-    Set<Bonus> declareBonus();
+    Set<Bonus> declareBonus() throws NoCardsException;
 
     /**
      * When the game starts each player plays a single card per turn. There are 32 cards and 4 players therefore a game consists of 8 turns
      */
-    Card playCard();
+    Card playCard() throws NoCardsException;
 
     Team getTeam();
 
-    void addCard(Card card);
+    void addCard(Card card) throws InvalidInputException;
+
+    List<Card> getCards();
 }

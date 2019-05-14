@@ -9,7 +9,7 @@ public class Team {
     private int points;
 
     public Team(Player playerOne, Player playerTwo) throws InvalidInputException {
-        if(playerOne == null || playerTwo == null) {
+        if (playerOne == null || playerTwo == null) {
             throw new InvalidInputException("Players can not be null!");
         }
 

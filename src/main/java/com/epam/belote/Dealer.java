@@ -4,9 +4,9 @@ import com.epam.belote.cards.Card;
 import com.epam.belote.cards.CardSuit;
 import com.epam.belote.cards.CardType;
 import com.epam.belote.exceptions.InvalidInputException;
+import com.epam.belote.exceptions.NoCardsException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -17,25 +17,30 @@ public class Dealer implements CardDealer {
 
     public Dealer(List<Player> players) {
         this.players = players;
-        fillTheDeck();
+        this.deck = new ArrayList<>();
     }
 
-    private void fillTheDeck(){
-        this.deck = new ArrayList<Card>();
+    public void fillTheDeck() {
+        this.deck = new ArrayList<>();
 
-        for(CardType type : CardType.values()) {
-            for(CardSuit suit : CardSuit.values()) {
+        for (CardType type : CardType.values()) {
+            for (CardSuit suit : CardSuit.values()) {
                 Card card = new Card(type, suit);
                 this.deck.add(card);
             }
         }
     }
 
-    public void deal5Cards() {
+    public void deal5Cards() throws InvalidInputException, NoCardsException {
+        if (this.deck.isEmpty()) {
+            throw new NoCardsException("The deck is empty!");
+        }
 
-        for(Player player : this.players) {
-            for(int index = 0; index < 5; index++) {
-                player.addCard(this.deck.get(new Random().nextInt(deck.size())));
+        for (Player player : this.players) {
+            for (int index = 0; index < 5; index++) {
+                Card card = this.deck.get(new Random().nextInt(deck.size()));
+                player.addCard(card);
+                this.deck.remove(card);
             }
         }
     }
@@ -44,5 +49,8 @@ public class Dealer implements CardDealer {
 
     }
 
+    public int getNumOfCardsInTheDeck() {
+        return this.deck.size();
+    }
 
 }

@@ -7,18 +7,13 @@ import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
 
-/**
- * The Sequence bonus is declared when the player has a sequence of three or more cards of the same suit, for example Jack, Queen and King of Spades
- */
 public class Sequence implements Bonus {
     private final CardSuit suit;
     private final List<CardType> cards;
-    private final int numberOfConsecutiveCards;
 
-    public Sequence(CardSuit suit, List<CardType> cards, int numberOfConsecutiveCards) {
+    public Sequence(CardSuit suit, List<CardType> cards) {
         this.suit = suit;
         this.cards = unmodifiableList(cards);
-        this.numberOfConsecutiveCards = numberOfConsecutiveCards;
     }
 
     public CardSuit getSuit() {
@@ -30,23 +25,22 @@ public class Sequence implements Bonus {
     }
 
     public int getBonus() {
-
-        switch (this.numberOfConsecutiveCards) {
+        switch (this.cards.size()) {
             case 3:
                 return 20;
             case 4:
                 return 50;
             case 5:
+            case 6:
+            case 7:
+            case 8:
                 return 100;
             default:
-                throw new UnsupportedOperationException("Incorrect number of consecutive cards!");
+                return 0;
         }
+    }
 
-
-        // returns 20 for 3 cards sequence
-        // returns 50 for 4 cards sequence
-        // return 100 for 5 or more cards sequence
-//        throw new UnsupportedOperationException("TODO: Implement");
-
+    public String toString() {
+        return "Sequence from " + suit + " - " + getBonus();
     }
 }

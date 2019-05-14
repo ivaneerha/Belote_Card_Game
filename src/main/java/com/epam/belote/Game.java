@@ -1,6 +1,8 @@
 package com.epam.belote;
 
 import com.epam.belote.exceptions.InvalidInputException;
+import com.epam.belote.exceptions.NoCardsException;
+import com.epam.belote.exceptions.NotEnoughPlayersException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,41 +11,74 @@ public class Game {
 
     private Dealer dealer;
     private List<Player> players;
-    private Bid currentBid;
 
     public Game() {
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
+        this.dealer = new Dealer(players);
+    }
+
+    public void dealFirstFiveCards() throws InvalidInputException, NotEnoughPlayersException, NoCardsException {
+        if (this.players.size() < 4) {
+            throw new NotEnoughPlayersException("Player seats are not filled yet!");
+        }
+        try {
+            this.dealer.deal5Cards();
+        } catch (NoCardsException e) {
+            this.dealer.fillTheDeck();
+            this.dealer.deal5Cards();
+        }
+    }
+
+
+    public int getAllDealtCards() {
+        int numCards = 0;
+
+        for (Player player : players) {
+            numCards += player.getCards().size();
+        }
+
+        return numCards;
+    }
+
+    public Game(List<Player> players) {
+        this.players = players;
     }
 
     public void addPlayer(Player player) throws InvalidInputException {
-        if(this.players.size() < 4) {
+        if (this.players.size() < 4) {
             this.players.add(player);
         } else {
-            throw new InvalidInputException("Player seats are filled!");
+            throw new InvalidInputException("All seats are taken!");
         }
     }
 
-    public void bidding() throws Exception {
-        if(players.size() < 4) {
-            throw new Exception("Player seats are not filled yet!");
+    public Bid bidding() throws InvalidInputException {
+        Bid lastBid = Bid.PASS;
+
+        if (validatePlayersSize()) {
+            throw new InvalidInputException("Player seats are not filled yet!");
         }
 
-        for(Player player : this.players) {
+        for (Player player : this.players) {
             Bid playerBid = player.bid();
-            boolean isBidOk = checkBid(playerBid);
-            while (!isBidOk) {
-                playerBid = player.bid();
-                isBidOk = checkBid(playerBid);
-            }
+            lastBid = bidCheck(playerBid, lastBid);
         }
+
+        return lastBid;
     }
 
-    private boolean checkBid(Bid bid) {
-        if(currentBid == null || currentBid.equals(Bid.PASS)) {
-            currentBid = bid;
-            return true;
-        } else {
-            return bid.ordinal() <= currentBid.ordinal();
+    private boolean validatePlayersSize() {
+        return players.size() < 4;
+    }
+
+    private Bid bidCheck(Bid playerBid, Bid lastBid) {
+        if (playerBid.ordinal() >= lastBid.ordinal()) {
+            return playerBid;
         }
+        return lastBid;
+    }
+
+    public List<Player> getPlayers() {
+        return this.players;
     }
 }
